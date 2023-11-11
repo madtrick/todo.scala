@@ -33,16 +33,16 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   verify()
 }
 
-@main def todo(args: String*) = {
+object Main extends App {
   val conf = new Conf(args)
 
   val fileExists = Files.exists(Paths.get("./todo.json"))
-  // TODO: Replace `List` with a type that provides better by-index access
+  // // TODO: Replace `List` with a type that provides better by-index access
   var todos: List[TodoItem] = List()
+  //
+  if (fileExists) todos = read[List[TodoItem]](Source.fromFile("./todo.json").mkString)
 
-  if fileExists then todos = read(Source.fromFile("./todo.json").mkString)
-
-  conf.subcommand match
+  conf.subcommand match {
     case Some(conf.add) => {
 
       val writer = new PrintWriter(new File("todo.json"))
@@ -57,15 +57,17 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
     }
     case Some(conf.list) => {
-      todos.zipWithIndex.foreach((task, index) => {
-        val status = if (task.completed) "completed" else "pending"
-        println(s"[$index] Task: \"${task.action}\" Status: $status")
+      todos.zipWithIndex.foreach({
+        case (task, index) => {
+          val status = if (task.completed) "completed" else "pending"
+          println(s"[$index] Task: \"${task.action}\" Status: $status")
+        }
       })
     }
     case Some(conf.complete) => {
       val index = conf.complete.index()
 
-      if index > todos.length then
+      if (index > todos.length)
         println(s"Task index out of boundaries")
         sys.exit(-1)
 
@@ -80,4 +82,5 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
     }
     case _ => println("Unknown mode")
+  }
 }

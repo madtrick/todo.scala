@@ -1,7 +1,7 @@
 import mill._, scalalib._
 
 object Todo extends ScalaModule {
-  def scalaVersion = "3.3.1"
+  def scalaVersion = "2.13.12"
 
   def ivyDeps = Agg(ivy"org.rogach::scallop:5.0.1", ivy"com.lihaoyi::upickle:3.1.3")
 
