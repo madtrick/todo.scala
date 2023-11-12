@@ -17,9 +17,10 @@ I'm using [Metals](https://scalameta.org/metals/) together with neovim, via the 
 
 ## TODO commands
 
-- `../mill Todo run add <action>`
-- `../mill Todo run complete -i <index>`
-- `../mill Todo run list`
+- `../mill Todo.run add <action>`
+- `../mill Todo.run complete -i <index>`
+- `../mill Todo.run list`
+- `../mill Todo.run delete -i <index>`
 
 ## Notes
 

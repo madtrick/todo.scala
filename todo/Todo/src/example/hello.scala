@@ -26,9 +26,14 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
     val index = opt[Int](required = true)
   }
 
+  object delete extends Subcommand("delete") {
+    val index = opt[Int](required = true)
+  }
+
   addSubcommand(add)
   addSubcommand(list)
   addSubcommand(complete)
+  addSubcommand(delete)
 
   verify()
 }
@@ -44,7 +49,6 @@ object Main extends App {
 
   conf.subcommand match {
     case Some(conf.add) => {
-
       val writer = new PrintWriter(new File("todo.json"))
       val item   = TodoItem(false, conf.add.item())
 
@@ -60,16 +64,17 @@ object Main extends App {
       todos.zipWithIndex.foreach({
         case (task, index) => {
           val status = if (task.completed) "completed" else "pending"
-          println(s"[$index] Task: \"${task.action}\" Status: $status")
+          println(s"[${index + 1}] Task: \"${task.action}\" Status: $status")
         }
       })
     }
     case Some(conf.complete) => {
       val index = conf.complete.index()
 
-      if (index > todos.length)
+      if (index > todos.length) {
         println(s"Task index out of boundaries")
         sys.exit(-1)
+      }
 
       val todo = todos(index - 1)
       todo.completed = true
@@ -80,6 +85,24 @@ object Main extends App {
       writer.write(json)
       writer.close()
 
+    }
+    case Some(conf.delete) => {
+      val index = conf.delete.index()
+
+      if (index > todos.length) {
+        println(s"Task index out of boundaries")
+        sys.exit(-1)
+      }
+
+      todos = todos.zipWithIndex
+        .filterNot({ case (task, i) => index == i })
+        .map({ case (task, index) => task })
+
+      val writer = new PrintWriter(new File("todo.json"))
+      val json   = write(todos)
+
+      writer.write(json)
+      writer.close()
     }
     case _ => println("Unknown mode")
   }
