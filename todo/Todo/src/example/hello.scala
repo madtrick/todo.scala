@@ -15,6 +15,32 @@ object TodoItem {
   implicit val rw: ReadWriter[TodoItem] = macroRW
 }
 
+object TodoItems {
+  private val filename = "todo.json"
+  private val path     = Paths.get(s"./$filename")
+
+  def load(): List[TodoItem] = {
+    val fileExists = Files.exists(path)
+
+    // TODO: Replace `List` with a type that provides better by-index access
+    var todos: List[TodoItem] = List()
+
+    if (fileExists)
+      todos = read[List[TodoItem]](Source.fromFile("./todo.json").mkString)
+
+    todos
+
+  }
+
+  def save(items: List[TodoItem]): Unit = {
+    val writer = new PrintWriter(new File(path.toString()))
+    val json   = write(items)
+
+    writer.write(json)
+    writer.close()
+  }
+}
+
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object add extends Subcommand("add") {
     val item = trailArg[String]()
@@ -39,25 +65,16 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 }
 
 object Main extends App {
-  val conf = new Conf(args)
-
-  val fileExists = Files.exists(Paths.get("./todo.json"))
-  // // TODO: Replace `List` with a type that provides better by-index access
-  var todos: List[TodoItem] = List()
-  //
-  if (fileExists) todos = read[List[TodoItem]](Source.fromFile("./todo.json").mkString)
+  val conf  = new Conf(args)
+  var todos = TodoItems.load()
 
   conf.subcommand match {
     case Some(conf.add) => {
-      val writer = new PrintWriter(new File("todo.json"))
-      val item   = TodoItem(false, conf.add.item())
+      val item = TodoItem(false, conf.add.item())
 
       todos = todos :+ item
 
-      val json = write(todos)
-
-      writer.write(json)
-      writer.close()
+      TodoItems.save(todos)
 
     }
     case Some(conf.list) => {
@@ -79,12 +96,7 @@ object Main extends App {
       val todo = todos(index - 1)
       todo.completed = true
 
-      val writer = new PrintWriter(new File("todo.json"))
-      val json   = write(todos)
-
-      writer.write(json)
-      writer.close()
-
+      TodoItems.save(todos)
     }
     case Some(conf.delete) => {
       val index = conf.delete.index()
@@ -95,14 +107,10 @@ object Main extends App {
       }
 
       todos = todos.zipWithIndex
-        .filterNot({ case (task, i) => index == i })
+        .filterNot({ case (task, i) => (index - 1) == i })
         .map({ case (task, index) => task })
 
-      val writer = new PrintWriter(new File("todo.json"))
-      val json   = write(todos)
-
-      writer.write(json)
-      writer.close()
+      TodoItems.save(todos)
     }
     case _ => println("Unknown mode")
   }
