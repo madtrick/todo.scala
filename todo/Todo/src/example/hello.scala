@@ -6,6 +6,9 @@ import upickle.default.{ReadWriter, macroRW, write, read}
 import java.nio.file.Files
 import java.nio.file.Paths
 import scala.io.Source
+import com.linecorp.armeria.server.annotation.Post
+import com.linecorp.armeria.common.HttpResponse
+import com.linecorp.armeria.server.Server
 
 case class TodoItem(var completed: Boolean, action: String) {
   require(action.length() < 50, "Item action can't be longer than 50 chars")
@@ -64,54 +67,71 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   verify()
 }
 
+class SampleService {
+  @Post("/hello")
+  def getHello: HttpResponse = {
+    println("GET HELLO")
+    return HttpResponse.of("Hello world")
+  }
+}
+
 object Main extends App {
   val conf  = new Conf(args)
   var todos = TodoItems.load()
 
-  conf.subcommand match {
-    case Some(conf.add) => {
-      val item = TodoItem(false, conf.add.item())
+  val builder = Server.builder()
+  builder.http(8080)
 
-      todos = todos :+ item
+  builder.service("/hello", (ctx, req) => HttpResponse.of("Hello, world!"))
 
-      TodoItems.save(todos)
+  val server = builder.build()
+  val future = server.start()
+  future.join()
 
-    }
-    case Some(conf.list) => {
-      todos.zipWithIndex.foreach({
-        case (task, index) => {
-          val status = if (task.completed) "completed" else "pending"
-          println(s"[${index + 1}] Task: \"${task.action}\" Status: $status")
-        }
-      })
-    }
-    case Some(conf.complete) => {
-      val index = conf.complete.index()
-
-      if (index > todos.length) {
-        println(s"Task index out of boundaries")
-        sys.exit(-1)
-      }
-
-      val todo = todos(index - 1)
-      todo.completed = true
-
-      TodoItems.save(todos)
-    }
-    case Some(conf.delete) => {
-      val index = conf.delete.index()
-
-      if (index > todos.length) {
-        println(s"Task index out of boundaries")
-        sys.exit(-1)
-      }
-
-      todos = todos.zipWithIndex
-        .filterNot({ case (task, i) => (index - 1) == i })
-        .map({ case (task, index) => task })
-
-      TodoItems.save(todos)
-    }
-    case _ => println("Unknown mode")
-  }
+  // conf.subcommand match {
+  //   case Some(conf.add) => {
+  //     val item = TodoItem(false, conf.add.item())
+  //
+  //     todos = todos :+ item
+  //
+  //     TodoItems.save(todos)
+  //
+  //   }
+  //   case Some(conf.list) => {
+  //     todos.zipWithIndex.foreach({
+  //       case (task, index) => {
+  //         val status = if (task.completed) "completed" else "pending"
+  //         println(s"[${index + 1}] Task: \"${task.action}\" Status: $status")
+  //       }
+  //     })
+  //   }
+  //   case Some(conf.complete) => {
+  //     val index = conf.complete.index()
+  //
+  //     if (index > todos.length) {
+  //       println(s"Task index out of boundaries")
+  //       sys.exit(-1)
+  //     }
+  //
+  //     val todo = todos(index - 1)
+  //     todo.completed = true
+  //
+  //     TodoItems.save(todos)
+  //   }
+  //   case Some(conf.delete) => {
+  //     val index = conf.delete.index()
+  //
+  //     if (index > todos.length) {
+  //       println(s"Task index out of boundaries")
+  //       sys.exit(-1)
+  //     }
+  //
+  //     todos = todos.zipWithIndex
+  //       .filterNot({ case (task, i) => (index - 1) == i })
+  //       .map({ case (task, index) => task })
+  //
+  //     TodoItems.save(todos)
+  //   }
+  //   case _ => println("Unknown mode")
+  // }
 }
