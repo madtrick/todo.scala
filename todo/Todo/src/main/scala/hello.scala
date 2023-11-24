@@ -1,4 +1,4 @@
-package example
+package main.scala
 
 import org.rogach.scallop._
 import java.io._

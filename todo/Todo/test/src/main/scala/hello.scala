@@ -1,8 +1,7 @@
 package test.scala
 
 import utest._
-import example.TodoItem
-import example.TodoItems
+import main.scala.TodoItem
 
 object HelloTests extends TestSuite {
   val tests = Tests {

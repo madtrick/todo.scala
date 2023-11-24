@@ -9,7 +9,7 @@ object Todo extends ScalaModule {
   )
 
   object test extends ScalaTests {
-    def ivyDepv       = Agg(ivy"com.lihaoyi::utest:0.7.11")
+    def ivyDeps       = Agg(ivy"com.lihaoyi::utest:0.7.11")
     def testFramework = "utest.runner.Framework"
   }
 }
