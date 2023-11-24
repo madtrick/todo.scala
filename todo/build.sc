@@ -17,6 +17,8 @@ object Todo extends ScalaModule {
 object WebServer extends ScalaModule {
   def scalaVersion = "2.13.12"
 
+  def moduleDeps = Seq(Todo)
+
   def ivyDeps = Agg(
     ivy"com.linecorp.armeria::armeria-scala:1.26.3"
   )
