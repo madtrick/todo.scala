@@ -1,6 +1,6 @@
 import mill._, scalalib._
 
-object Todo extends ScalaModule {
+object Cli extends ScalaModule {
   def scalaVersion = "2.13.12"
 
   def ivyDeps = Agg(
@@ -17,7 +17,7 @@ object Todo extends ScalaModule {
 object WebServer extends ScalaModule {
   def scalaVersion = "2.13.12"
 
-  def moduleDeps = Seq(Todo)
+  def moduleDeps = Seq(Cli)
 
   def ivyDeps = Agg(
     ivy"com.linecorp.armeria::armeria-scala:1.26.3"
