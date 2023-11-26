@@ -5,6 +5,15 @@ object Cli extends ScalaModule {
 
   def ivyDeps = Agg(
     ivy"org.rogach::scallop:5.0.1",
+  )
+
+  def moduleDeps = Seq(Domain)
+}
+
+object Domain extends ScalaModule {
+  def scalaVersion = "2.13.12"
+
+  def ivyDeps = Agg(
     ivy"com.lihaoyi::upickle:3.1.3"
   )
 
