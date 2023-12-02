@@ -2,6 +2,7 @@ package main.scala
 
 import org.rogach.scallop._
 import main.cases.AddTodo
+import main.cases.ListTodos
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object add extends Subcommand("add") {
@@ -35,12 +36,7 @@ object Main extends App {
       AddTodo(conf.add.item(), TodoItemsCollection)
     }
     case Some(conf.list) => {
-      todos.zipWithIndex.foreach({
-        case (task, index) => {
-          val status = if (task.completed) "completed" else "pending"
-          println(s"[${index + 1}] Task: \"${task.action}\" Status: $status")
-        }
-      })
+      ListTodos(TodoItemsCollection)
     }
     case Some(conf.complete) => {
       val index = conf.complete.index()
