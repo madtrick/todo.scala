@@ -3,7 +3,7 @@ package main.scala.com.github.madtrick
 import com.linecorp.armeria.server.annotation.Post
 import com.linecorp.armeria.common.HttpResponse
 import com.linecorp.armeria.server.Server
-import main.scala.TodoItems
+import main.scala.TodoItemsCollection
 
 class SampleService {
   @Post("/hello")
@@ -20,7 +20,7 @@ object Main extends App {
   builder.service(
     "/",
     (ctx, req) => {
-      val todos = TodoItems.load()
+      val todos = TodoItemsCollection.load()
       println("Received request")
       HttpResponse.ofJson(todos)
     }

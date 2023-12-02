@@ -3,7 +3,7 @@ package test.scala
 import utest._
 import main.scala.TodoItem
 
-object HelloTests extends TestSuite {
+object TodoItemTests extends TestSuite {
   val tests = Tests {
     test("item description length") {
       intercept[IllegalArgumentException] {

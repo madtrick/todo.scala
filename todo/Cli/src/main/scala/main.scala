@@ -1,6 +1,7 @@
 package main.scala
 
 import org.rogach.scallop._
+import main.cases.AddTodo
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object add extends Subcommand("add") {
@@ -27,16 +28,11 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
 
 object Main extends App {
   val conf  = new Conf(args)
-  var todos = TodoItems.load()
+  var todos = TodoItemsCollection.load()
 
   conf.subcommand match {
     case Some(conf.add) => {
-      val item = TodoItem(false, conf.add.item())
-
-      todos = todos :+ item
-
-      TodoItems.save(todos)
-
+      AddTodo(conf.add.item(), TodoItemsCollection)
     }
     case Some(conf.list) => {
       todos.zipWithIndex.foreach({
@@ -57,7 +53,7 @@ object Main extends App {
       val todo = todos(index - 1)
       todo.completed = true
 
-      TodoItems.save(todos)
+      TodoItemsCollection.save(todos)
     }
     case Some(conf.delete) => {
       val index = conf.delete.index()
@@ -71,7 +67,7 @@ object Main extends App {
         .filterNot({ case (task, i) => (index - 1) == i })
         .map({ case (task, index) => task })
 
-      TodoItems.save(todos)
+      TodoItemsCollection.save(todos)
     }
     case _ => println("Unknown mode")
   }
