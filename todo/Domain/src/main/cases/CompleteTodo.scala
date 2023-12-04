@@ -2,16 +2,16 @@ package main.cases
 
 import main.scala.TodoItem
 import main.scala.TodoItemsCollectionTrait
+import main.cases.errors.TaskIndexOutOfBoundariesError
 
 object CompleteTodo {
   def apply(
       index: Int,
       todoItemsCollection: TodoItemsCollectionTrait
-  ): Unit = {
+  ): Either[TaskIndexOutOfBoundariesError, Unit] = {
 
-    if (index > todoItemsCollection.length) {
-      println(s"Task index out of boundaries")
-      sys.exit(-1)
+    if (index == 0 || index > todoItemsCollection.length) {
+      return Left(TaskIndexOutOfBoundariesError(index))
     }
     val todos = todoItemsCollection.load
     val todo  = todos(index - 1)
@@ -20,5 +20,6 @@ object CompleteTodo {
     todo.completed = true
 
     todoItemsCollection.save(todos)
+    Right(())
   }
 }
