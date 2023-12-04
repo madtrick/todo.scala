@@ -40,12 +40,18 @@ object Main extends App {
     case Some(conf.complete) => {
       val index = conf.complete.index()
 
-      CompleteTodo(index, TodoItemsCollection)
+      CompleteTodo(index, TodoItemsCollection) match {
+        case Left(value)  => println(s"Invalid index \"$index\"")
+        case Right(value) => ()
+      }
     }
     case Some(conf.delete) => {
       val index = conf.delete.index()
 
-      DeleteTodo(index, TodoItemsCollection)
+      DeleteTodo(index, TodoItemsCollection) match {
+        case Left(value)  => println(s"Invalid index \"$index\"")
+        case Right(value) => ()
+      }
     }
     case _ => println("Unknown mode")
   }
