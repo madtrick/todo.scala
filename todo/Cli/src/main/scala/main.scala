@@ -3,6 +3,7 @@ package main.scala
 import org.rogach.scallop._
 import main.cases.AddTodo
 import main.cases.ListTodos
+import main.cases.CompleteTodo
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object add extends Subcommand("add") {
@@ -41,15 +42,7 @@ object Main extends App {
     case Some(conf.complete) => {
       val index = conf.complete.index()
 
-      if (index > todos.length) {
-        println(s"Task index out of boundaries")
-        sys.exit(-1)
-      }
-
-      val todo = todos(index - 1)
-      todo.completed = true
-
-      TodoItemsCollection.save(todos)
+      CompleteTodo(index, TodoItemsCollection)
     }
     case Some(conf.delete) => {
       val index = conf.delete.index()

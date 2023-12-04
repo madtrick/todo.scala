@@ -12,6 +12,7 @@ import java.nio.file.Path
 trait TodoItemsCollectionTrait {
   def load(): List[TodoItem]
   def save(items: List[TodoItem]): Unit
+  def length: Int
   def filepath_=(path: Path): Unit
   def filepath: Path
 }

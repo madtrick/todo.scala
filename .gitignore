@@ -5,3 +5,4 @@ out/
 .DS_Store
 todo.json
 mill
+*.worksheet.sc
