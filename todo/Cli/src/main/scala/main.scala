@@ -1,9 +1,7 @@
 package main.scala
 
 import org.rogach.scallop._
-import main.cases.AddTodo
-import main.cases.ListTodos
-import main.cases.CompleteTodo
+import main.cases._
 
 class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object add extends Subcommand("add") {
@@ -47,16 +45,7 @@ object Main extends App {
     case Some(conf.delete) => {
       val index = conf.delete.index()
 
-      if (index > todos.length) {
-        println(s"Task index out of boundaries")
-        sys.exit(-1)
-      }
-
-      todos = todos.zipWithIndex
-        .filterNot({ case (task, i) => (index - 1) == i })
-        .map({ case (task, index) => task })
-
-      TodoItemsCollection.save(todos)
+      DeleteTodo(index, TodoItemsCollection)
     }
     case _ => println("Unknown mode")
   }

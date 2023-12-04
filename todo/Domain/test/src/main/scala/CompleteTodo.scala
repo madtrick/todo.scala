@@ -2,7 +2,6 @@ package main.scala
 
 import utest._
 import main.scala.TodoItem
-import main.cases.AddTodo
 import java.nio.file.Paths
 import main.cases.CompleteTodo
 import main.cases.errors.TaskIndexOutOfBoundariesError
