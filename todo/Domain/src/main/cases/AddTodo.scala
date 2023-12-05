@@ -10,7 +10,7 @@ object AddTodo {
   ): Unit = {
     println(s"Add todo $todo")
 
-    val item  = TodoItem(false, todo)
+    val item  = TodoItem(todoItemsCollection.nextId, false, todo)
     val todos = todoItemsCollection.load() :+ item
 
     todoItemsCollection.save(todos)

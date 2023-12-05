@@ -15,6 +15,7 @@ trait TodoItemsCollectionTrait {
   def length: Int
   def filepath_=(path: Path): Unit
   def filepath: Path
+  def nextId: Int
 }
 
 // TODO: rename this object to FileTodoItemsCollection
@@ -58,5 +59,18 @@ object TodoItemsCollection extends TodoItemsCollectionTrait {
     val todos = this.load
 
     return todos.length
+  }
+
+  /** Return the next id in the collection. It picks the next id by adding 1 to the last stored id.
+    * Of course this wouldn't work on a real life scenario with concurrency.
+    */
+  def nextId: Int = {
+    val todos = this.load
+
+    if (todos.length == 0) {
+      0
+    } else {
+      todos.last.id + 1
+    }
   }
 }

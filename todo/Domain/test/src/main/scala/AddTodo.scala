@@ -19,7 +19,9 @@ object AddTodoTest extends TestSuite {
 
     test("appends a new todo item") {
       TodoItemsCollection.filepath = Paths.get(s"/tmp/${TestUtils.todoFileName}")
-      TodoItemsCollection.save(List(new TodoItem(false, "clean the litter")))
+      TodoItemsCollection.save(
+        List(new TodoItem(TodoItemsCollection.nextId, false, "clean the litter"))
+      )
 
       AddTodo("take the trash out", TodoItemsCollection)
 

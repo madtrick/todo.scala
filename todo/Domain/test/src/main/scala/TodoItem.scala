@@ -8,6 +8,7 @@ object TodoItemTests extends TestSuite {
     test("item description length") {
       intercept[IllegalArgumentException] {
         TodoItem(
+          0,
           false,
           "this is a long text that should throw an exception. The max length is 50 chars"
         )

@@ -11,20 +11,42 @@ object TodoItemsCollectionTest extends TestSuite {
 
       assert(TodoItemsCollection.length == 0)
 
-      TodoItemsCollection.save(List(new TodoItem(false, "take the trash out")))
+      TodoItemsCollection.save(List(new TodoItem(0, false, "take the trash out")))
 
       assert(TodoItemsCollection.length == 1)
     }
 
-    test("save an item to the collection") {
+    test("saves an item to the collection") {
       TodoItemsCollection.filepath = Paths.get(s"/tmp/${TestUtils.todoFileName}")
 
-      TodoItemsCollection.save(List(new TodoItem(false, "clean the garage")))
+      TodoItemsCollection.save(List(new TodoItem(0, false, "clean the garage")))
 
       val todo = TodoItemsCollection.load()(0)
 
+      assert(todo.id == 0)
       assert(todo.completed == false)
       assert(todo.action == "clean the garage")
+    }
+
+    test("returns the next id for an item (empty list)") {
+      TodoItemsCollection.filepath = Paths.get(s"/tmp/${TestUtils.todoFileName}")
+
+      assert(TodoItemsCollection.nextId == 0)
+    }
+
+    test("returns the next id for an item") {
+      TodoItemsCollection.filepath = Paths.get(s"/tmp/${TestUtils.todoFileName}")
+
+      assert(TodoItemsCollection.nextId == 0)
+
+      TodoItemsCollection.save(List(new TodoItem(0, false, "learn german")))
+      TodoItemsCollection.save(List(new TodoItem(1, false, "dust the bedroom")))
+
+      assert(TodoItemsCollection.nextId == 2)
+
+      TodoItemsCollection.save(List(new TodoItem(4, false, "dust the bedroom")))
+
+      assert(TodoItemsCollection.nextId == 5)
     }
   }
 }

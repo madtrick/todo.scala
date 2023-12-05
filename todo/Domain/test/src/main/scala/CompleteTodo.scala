@@ -5,12 +5,13 @@ import main.scala.TodoItem
 import java.nio.file.Paths
 import main.cases.CompleteTodo
 import main.cases.errors.TaskIndexOutOfBoundariesError
+import main.cases.AddTodo
 
 object CompleteTodoTest extends TestSuite {
   val tests = Tests {
     test("completes a todo") {
       TodoItemsCollection.filepath = Paths.get(s"/tmp/${TestUtils.todoFileName}")
-      TodoItemsCollection.save(List(new TodoItem(false, "paint the porch")))
+      AddTodo("paint the porch", TodoItemsCollection)
 
       CompleteTodo(1, TodoItemsCollection)
 
