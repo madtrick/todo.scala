@@ -14,6 +14,9 @@ import com.linecorp.armeria.common.HttpStatus
 import com.fasterxml.jackson.databind.JsonNode
 import main.cases.ListTodos
 import com.linecorp.armeria.server.annotation.Get
+import com.linecorp.armeria.server.annotation.RequestConverter
+import main.scala.com.github.madtrick.converters.TodoItemRequestConverter
+import main.scala.TodoItem
 
 class SampleService {
   @Post("/hello")
@@ -58,9 +61,9 @@ object Main extends App {
 
   builder.annotatedService(new Object() {
     @Post("/todos")
-    def createTodo(body: JsonNode): Unit = {
-      println("Body", body)
-      AddTodo(body.get("action").textValue(), TodoItemsCollection)
+    @RequestConverter(classOf[TodoItemRequestConverter])
+    def createTodo(todo: TodoItem): Unit = {
+      AddTodo(todo.action, TodoItemsCollection)
     }
 
     @Get("/todos")
