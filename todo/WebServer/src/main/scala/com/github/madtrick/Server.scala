@@ -11,6 +11,9 @@ import com.linecorp.armeria.server.ServiceRequestContext
 import com.linecorp.armeria.common.HttpRequest
 import main.cases.AddTodo
 import com.linecorp.armeria.common.HttpStatus
+import com.fasterxml.jackson.databind.JsonNode
+import main.cases.ListTodos
+import com.linecorp.armeria.server.annotation.Get
 
 class SampleService {
   @Post("/hello")
@@ -52,6 +55,19 @@ object Main extends App {
       }
     }
   )
+
+  builder.annotatedService(new Object() {
+    @Post("/todos")
+    def createTodo(body: JsonNode): Unit = {
+      println("Body", body)
+      AddTodo(body.get("action").textValue(), TodoItemsCollection)
+    }
+
+    @Get("/todos")
+    def listTodos(): HttpResponse = {
+      HttpResponse.ofJson(TodoItemsCollection.load())
+    }
+  })
 
   val server = builder.build()
   val future = server.start()
