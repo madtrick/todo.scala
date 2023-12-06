@@ -2,7 +2,7 @@ package main.scala
 
 import upickle.default.{ReadWriter, macroRW}
 
-case class TodoItem(val id: Int, var completed: Boolean, action: String) {
+case class TodoItem(val id: Int, var completed: Boolean, var action: String) {
   require(action.length() < 50, "Item action can't be longer than 50 chars")
 }
 
