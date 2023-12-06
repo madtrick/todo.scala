@@ -17,12 +17,13 @@ class TodoItemRequestConverter extends RequestConverterFunction {
       expectedParameterizedResultType: ParameterizedType
   ): Object = {
     if (expectedResultType == classOf[TodoItem]) {
-      val node   = TodoItemRequestConverter.mapper.readTree(request.contentUtf8())
-      val action = TodoItemRequestConverter.stringValue(node, "action")
+      val node      = TodoItemRequestConverter.mapper.readTree(request.contentUtf8())
+      val action    = TodoItemRequestConverter.stringValue(node, "action")
+      val completed = TodoItemRequestConverter.booleanValue(node, "completed")
 
       // -1 is a temporary placeholder. The converter should not
       // return TodoItems but payloads
-      return new TodoItem(-1, false, action)
+      return new TodoItem(-1, completed, action)
     } else {
       RequestConverterFunction.fallthrough()
     }
@@ -40,5 +41,15 @@ object TodoItemRequestConverter {
       throw new IllegalArgumentException(field + " is missing!")
     }
     return value.textValue()
+  }
+
+  def booleanValue(jsonNode: JsonNode, field: String): Boolean = {
+    val value: JsonNode = jsonNode.get(field)
+
+    // TODO: do not throw. Instead return an Option
+    if (value == null) {
+      throw new IllegalArgumentException(field + " is missing!")
+    }
+    return value.booleanValue()
   }
 }

@@ -17,6 +17,9 @@ import com.linecorp.armeria.server.annotation.Get
 import com.linecorp.armeria.server.annotation.RequestConverter
 import main.scala.com.github.madtrick.converters.TodoItemRequestConverter
 import main.scala.TodoItem
+import com.linecorp.armeria.server.annotation.Param
+import com.linecorp.armeria.server.annotation.Put
+import main.cases.UpdateTodo
 
 class SampleService {
   @Post("/hello")
@@ -69,6 +72,13 @@ object Main extends App {
     @Get("/todos")
     def listTodos(): HttpResponse = {
       HttpResponse.ofJson(TodoItemsCollection.load())
+    }
+
+    @Put("/todos/:id")
+    @RequestConverter(classOf[TodoItemRequestConverter])
+    def updateTodo(@Param id: Int, todo: TodoItem): HttpResponse = {
+      UpdateTodo(id, todo.completed, todo.action, TodoItemsCollection)
+      HttpResponse.ofJson(TodoItemsCollection.findById(id))
     }
   })
 
