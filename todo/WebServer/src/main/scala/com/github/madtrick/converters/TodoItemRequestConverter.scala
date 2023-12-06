@@ -20,7 +20,9 @@ class TodoItemRequestConverter extends RequestConverterFunction {
       val node   = TodoItemRequestConverter.mapper.readTree(request.contentUtf8())
       val action = TodoItemRequestConverter.stringValue(node, "action")
 
-      return new TodoItem(false, action)
+      // -1 is a temporary placeholder. The converter should not
+      // return TodoItems but payloads
+      return new TodoItem(-1, false, action)
     } else {
       RequestConverterFunction.fallthrough()
     }

@@ -2,16 +2,16 @@ package main.cases
 
 import main.scala.TodoItem
 import main.scala.TodoItemsCollectionTrait
-import main.cases.errors.TaskIndexOutOfBoundariesError
+import main.cases.errors.TodoItemNotFoundError
 
 object CompleteTodo {
   def apply(
       index: Int,
       todoItemsCollection: TodoItemsCollectionTrait
-  ): Either[TaskIndexOutOfBoundariesError, Unit] = {
+  ): Either[TodoItemNotFoundError, Unit] = {
 
     if (index == 0 || index > todoItemsCollection.length) {
-      return Left(TaskIndexOutOfBoundariesError(index))
+      return Left(TodoItemNotFoundError(index))
     }
     val todos = todoItemsCollection.load
     val todo  = todos(index - 1)

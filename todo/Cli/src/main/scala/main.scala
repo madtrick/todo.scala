@@ -11,11 +11,11 @@ class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
   object list extends Subcommand("list") {}
 
   object complete extends Subcommand("complete") {
-    val index = opt[Int](required = true)
+    val id = opt[Int](required = true)
   }
 
   object delete extends Subcommand("delete") {
-    val index = opt[Int](required = true)
+    val id = opt[Int](required = true)
   }
 
   addSubcommand(add)
@@ -35,21 +35,30 @@ object Main extends App {
       AddTodo(conf.add.item(), TodoItemsCollection)
     }
     case Some(conf.list) => {
-      ListTodos(TodoItemsCollection)
+      val todos = TodoItemsCollection.load
+
+      todos
+        .foreach({
+          case (todo) => {
+            val status = if (todo.completed) "completed" else "pending"
+            println(s"[${todo.id}] Task: \"${todo.action}\". Status: $status")
+          }
+        })
+
     }
     case Some(conf.complete) => {
-      val index = conf.complete.index()
+      val id = conf.complete.id()
 
-      CompleteTodo(index, TodoItemsCollection) match {
-        case Left(value)  => println(s"Invalid index \"$index\"")
+      CompleteTodo(id, TodoItemsCollection) match {
+        case Left(value)  => println(s"Invalid id \"$id\"")
         case Right(value) => ()
       }
     }
     case Some(conf.delete) => {
-      val index = conf.delete.index()
+      val id = conf.delete.id()
 
-      DeleteTodo(index, TodoItemsCollection) match {
-        case Left(value)  => println(s"Invalid index \"$index\"")
+      DeleteTodo(id, TodoItemsCollection) match {
+        case Left(value)  => println(s"Invalid index \"$id\"")
         case Right(value) => ()
       }
     }

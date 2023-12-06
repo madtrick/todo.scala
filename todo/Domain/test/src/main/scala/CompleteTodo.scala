@@ -4,7 +4,7 @@ import utest._
 import main.scala.TodoItem
 import java.nio.file.Paths
 import main.cases.CompleteTodo
-import main.cases.errors.TaskIndexOutOfBoundariesError
+import main.cases.errors.TodoItemNotFoundError
 import main.cases.AddTodo
 
 object CompleteTodoTest extends TestSuite {
@@ -26,7 +26,7 @@ object CompleteTodoTest extends TestSuite {
 
       // Tried using "assertMatch" but it types the value as "Any"
       error match {
-        case Left(value) => assert(value.kind == TaskIndexOutOfBoundariesError.kind)
+        case Left(value) => assert(value.kind == TodoItemNotFoundError.kind)
         case _           => assert(false)
       }
     }
