@@ -39,8 +39,9 @@ object TodoItemsCollectionTest extends TestSuite {
 
       assert(TodoItemsCollection.nextId == 0)
 
-      TodoItemsCollection.save(List(new TodoItem(0, false, "learn german")))
-      TodoItemsCollection.save(List(new TodoItem(1, false, "dust the bedroom")))
+      TodoItemsCollection.save(
+        List(new TodoItem(0, false, "learn german"), new TodoItem(1, false, "dust the bedroom"))
+      )
 
       assert(TodoItemsCollection.nextId == 2)
 
