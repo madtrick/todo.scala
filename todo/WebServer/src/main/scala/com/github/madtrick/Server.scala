@@ -20,6 +20,7 @@ import main.scala.TodoItem
 import com.linecorp.armeria.server.annotation.Param
 import com.linecorp.armeria.server.annotation.Put
 import main.cases.UpdateTodo
+import com.linecorp.armeria.server.logging.LoggingService
 
 class SampleService {
   @Post("/hello")
@@ -81,6 +82,8 @@ object Main extends App {
       HttpResponse.ofJson(TodoItemsCollection.findById(id))
     }
   })
+
+  builder.decorator(LoggingService.newDecorator())
 
   val server = builder.build()
   val future = server.start()
