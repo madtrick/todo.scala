@@ -4,7 +4,7 @@ object Cli extends ScalaModule {
   def scalaVersion = "2.13.12"
 
   def ivyDeps = Agg(
-    ivy"org.rogach::scallop:5.0.1",
+    ivy"org.rogach::scallop:5.0.1"
   )
 
   def moduleDeps = Seq(Domain)
@@ -29,6 +29,7 @@ object WebServer extends ScalaModule {
   def moduleDeps = Seq(Cli)
 
   def ivyDeps = Agg(
-    ivy"com.linecorp.armeria::armeria-scala:1.26.3"
+    ivy"com.linecorp.armeria::armeria-scala:1.26.3",
+    ivy"org.slf4j:slf4j-simple:2.0.9"
   )
 }
