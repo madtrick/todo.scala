@@ -21,6 +21,12 @@ import com.linecorp.armeria.server.annotation.Param
 import com.linecorp.armeria.server.annotation.Put
 import main.cases.UpdateTodo
 import com.linecorp.armeria.server.logging.LoggingService
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.linecorp.armeria.server.annotation.JacksonRequestConverterFunction
+import com.linecorp.armeria.server.annotation.JacksonResponseConverterFunction
+import java.text.SimpleDateFormat
 
 class SampleService {
   @Post("/hello")
@@ -63,25 +69,47 @@ object Main extends App {
     }
   )
 
-  builder.annotatedService(new Object() {
-    @Post("/todos")
-    @RequestConverter(classOf[TodoItemRequestConverter])
-    def createTodo(todo: TodoItem): Unit = {
-      AddTodo(todo.action, TodoItemsCollection)
-    }
+  val mapper = new ObjectMapper();
+  mapper.registerModule(new JodaModule());
 
-    @Get("/todos")
-    def listTodos(): HttpResponse = {
-      HttpResponse.ofJson(TodoItemsCollection.load())
-    }
+  /** NOTE: after doing this, dates are still returned as timestamps
+    *
+    * For example:
+    *
+    * [{"id":0,"completed":false,"action":"vacuum clean the kitchen","createdAt":1702577897882}]
+    *
+    * Related links
+    *
+    *   - https://stackoverflow.com/questions/27978762/jackson-serializationfeature-write-dates-as-timestamps-not-turning-off-timestamp
+    *   - https://fasterxml.github.io/jackson-databind/javadoc/2.6/com/fasterxml/jackson/databind/SerializationFeature.html#WRITE_DATES_AS_TIMESTAMPS
+    *
+    * Maybe I'm missing specifying what's the format I want the dates serialized to.
+    */
+  mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
-    @Put("/todos/:id")
-    @RequestConverter(classOf[TodoItemRequestConverter])
-    def updateTodo(@Param id: Int, todo: TodoItem): HttpResponse = {
-      UpdateTodo(id, todo.completed, todo.action, TodoItemsCollection)
-      HttpResponse.ofJson(TodoItemsCollection.findById(id))
-    }
-  })
+  builder.annotatedService(
+    new Object() {
+      @Post("/todos")
+      @RequestConverter(classOf[TodoItemRequestConverter])
+      def createTodo(todo: TodoItem): Unit = {
+        AddTodo(todo.action, TodoItemsCollection)
+      }
+
+      @Get("/todos")
+      def listTodos(): HttpResponse = {
+        HttpResponse.ofJson(TodoItemsCollection.load())
+      }
+
+      @Put("/todos/:id")
+      @RequestConverter(classOf[TodoItemRequestConverter])
+      def updateTodo(@Param id: Int, todo: TodoItem): HttpResponse = {
+        UpdateTodo(id, todo.completed, todo.action, TodoItemsCollection)
+        HttpResponse.ofJson(TodoItemsCollection.findById(id))
+      }
+    },
+    new JacksonRequestConverterFunction(mapper),
+    new JacksonResponseConverterFunction(mapper)
+  )
 
   builder.decorator(LoggingService.newDecorator())
 

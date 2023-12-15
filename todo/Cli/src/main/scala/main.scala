@@ -40,8 +40,11 @@ object Main extends App {
       todos
         .foreach({
           case (todo) => {
-            val status = if (todo.completed) "completed" else "pending"
-            println(s"[${todo.id}] Task: \"${todo.action}\". Status: $status")
+            val status    = if (todo.completed) "completed" else "pending"
+            val createdAt = todo.createdAt.toString("d MMMM, yyyy")
+            println(
+              s"[${todo.id}] Task: \"${todo.action}\". Status: $status. Created at: \"$createdAt\""
+            )
           }
         })
 

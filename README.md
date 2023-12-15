@@ -23,6 +23,14 @@ The project is split into three modules:
 - `../mill <Module>.run`. Runs the app inside the given module
 - `../mill <Module>.test`. Runts the tests inside the given module
 
+### Test focus
+
+It can be done like this:
+
+```
+../mill Domain.test -- "main.scala.UpdateTodoTest"
+```
+
 ## TODO commands
 
 - `../mill Cli.run add <action>`
